@@ -2,7 +2,10 @@ import './appInfo.css'
 
 const AppInfo = () => {
   return (
-    <div>AppInfo</div>
+    <div className='app-info'>
+      <p className="fs-3 text-uppercase">Barcha kinolar soni:</p>
+      <p className="fs-4 text-uppercase">Ko'rilgan kinolar soni:</p>
+    </div>
   )
 }
 
