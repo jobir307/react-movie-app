@@ -1,8 +1,15 @@
 import './movieList.css'
+import MovieListItem from '../movie-list-item/MovieListItem'
 
-const MovieList = () => {
+const MovieList = ({movies}) => {
   return (
-    <div className='movie-list'>MovieList</div>
+    <ul className='movie-list'>
+      {
+        movies.map(movie => (
+          <MovieListItem key={movie.id} {...movie} />
+        ))
+      }
+    </ul>
   )
 }
 
