@@ -5,7 +5,8 @@ class MovieListItem extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      favourite: false
+      favourite: false,
+      like: true
     }
   }
 
@@ -15,19 +16,29 @@ class MovieListItem extends Component {
     }))
   }
 
+  likeHandler = () => {
+    this.setState(({ like }) => ({
+      like: !like
+    }))
+  }
+
   render() {
-    const {name, viewers} = this.props
-    const {favourite} = this.state
+    const {name, viewers, onDelete} = this.props
+    const {favourite, like} = this.state
 
     return (
-      <li className={`list-group-item d-flex justify-content-between ${favourite && 'favourite'}`}>
-        <span className="list-group-item-label">{name}</span>
+      <li className={`list-group-item d-flex justify-content-between ${favourite && 'favourite'} ${like && 'like'}`}>
+        <span className="list-group-item-label" onClick={this.likeHandler}>{name}</span>
         <input type="number" className='list-group-item-input' defaultValue={viewers} />
         <div className="d-flex justify-content-center align-items-center">
           <button type='button' className="btn-cookie btn-sm" onClick={this.favouriteHandler}>
             <i className="fas fa-cookie"></i>
           </button>
-          <button type='button' className="btn-trash btn-sm">
+          <button 
+            type='button' 
+            className="btn-trash btn-sm"
+            onClick={onDelete}
+          >
             <i className="fas fa-trash"></i>
           </button>
           <i className="fas fa-star"></i>
