@@ -25,7 +25,7 @@ class App extends Component {
       /* const index = movies.findIndex(c => c.id === id)
       movies.splice(index, 1) // mutable - bu react qonunlariga xos emas!!!  */
 
-      const newMovies = movies.filter(c => c.id != id) // immutable - bu react qonunlariga muvofiq !!! 
+      const newMovies = movies.filter(c => c.id !== id) // immutable - bu react qonunlariga muvofiq !!! 
       return {
         movies: newMovies
       }
