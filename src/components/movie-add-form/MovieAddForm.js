@@ -20,7 +20,7 @@ class MovieAddForm extends Component {
   addFormHandler = (event) => {
     event.preventDefault()
     if (this.state.name.length > 0 && this.state.viewers.length > 0){
-      this.props.addForm({name: this.state.name, viewers: this.state.viewers, id: uuidv4(), favourite: false})
+      this.props.addForm({name: this.state.name, viewers: this.state.viewers, id: uuidv4(), favourite: false, like: false})
       this.setState({
         name: '',
         viewers: ''   

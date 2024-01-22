@@ -1,7 +1,7 @@
 import './movieList.css'
 import MovieListItem from '../movie-list-item/MovieListItem'
 
-const MovieList = ({movies, onDelete}) => {
+const MovieList = ({movies, onDelete, toggleHandler}) => {
   return (
     <ul className='movie-list'>
       {
@@ -10,6 +10,7 @@ const MovieList = ({movies, onDelete}) => {
             key={movie.id} 
             {...movie}
             onDelete={() => onDelete(movie.id)}
+            onToggleHandler={ (e) => toggleHandler(movie.id, e.currentTarget.getAttribute('data-toggle')) }
           />
         ))
       }

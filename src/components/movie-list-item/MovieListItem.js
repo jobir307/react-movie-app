@@ -1,37 +1,15 @@
-import { Component } from 'react'
 import './movieListItem.css'
 
-class MovieListItem extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      favourite: false,
-      like: true
-    }
-  }
+const MovieListItem = (props) => {
 
-  favouriteHandler = () => {
-    this.setState(({ favourite }) => ({
-      favourite: !favourite
-    }))
-  }
-
-  likeHandler = () => {
-    this.setState(({ like }) => ({
-      like: !like
-    }))
-  }
-
-  render() {
-    const {name, viewers, onDelete} = this.props
-    const {favourite, like} = this.state
+    const { name, viewers, like, favourite, onDelete, onToggleHandler } = props
 
     return (
       <li className={`list-group-item d-flex justify-content-between ${favourite && 'favourite'} ${like && 'like'}`}>
-        <span className="list-group-item-label" onClick={this.likeHandler}>{name}</span>
+        <span className="list-group-item-label" onClick={onToggleHandler} data-toggle='like'>{name}</span>
         <input type="number" className='list-group-item-input' defaultValue={viewers} />
         <div className="d-flex justify-content-center align-items-center">
-          <button type='button' className="btn-cookie btn-sm" onClick={this.favouriteHandler}>
+          <button type='button' className="btn-cookie btn-sm" onClick={onToggleHandler} data-toggle='favourite'>
             <i className="fas fa-cookie"></i>
           </button>
           <button 
@@ -45,7 +23,6 @@ class MovieListItem extends Component {
         </div>
       </li>
     )
-  }
 }
 
 

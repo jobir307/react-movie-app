@@ -12,13 +12,14 @@ class App extends Component {
     super(props)
     this.state = {
       movies: [
-        {id:1, name: 'Empire of Osman', viewers: 944, favourite: true},
-        {id:2, name: 'Ertugru', viewers: 451, favourite: false},
-        {id:3, name: 'Omar', viewers: 711, favourite: true}
-      ]
+        {id:1, name: 'Empire of Osman', viewers: 944, favourite: false, like: false},
+        {id:2, name: 'Ertugru', viewers: 451, favourite: false, like: false},
+        {id:3, name: 'Omar', viewers: 711, favourite: false, like: false}
+      ],
+      searchText: '',
+      filter: 'all'
     }
   }
-
 
   movieDelete = (id) => {
     this.setState(({ movies }) => {
@@ -38,18 +39,70 @@ class App extends Component {
     }))
   }
 
+  toggleHandler = (id, prop) => {
+    this.setState(({ movies }) => ({
+      movies: movies.map(movie => {
+        if (movie.id === id) {
+          return {...movie, [prop]: !movie[prop]}
+        }
+        return movie
+      })
+    }))
+  }
+
+  searchHandler = (arr, term) => {
+    if (term.length === 0){
+      return arr
+    } else {
+      return arr.filter(movie => movie.name.toLowerCase().indexOf(term.toLowerCase()) > -1)
+    }
+  }
+
+  updateSearchTextHadler = (term) => {
+    this.setState({ searchText: term })
+  }
+
+  filterHandler = (arr, filter) => {
+    switch (filter) {
+      case 'most':
+        return arr.filter(movie => movie.viewers > 800)
+      case 'popular':
+        return arr.filter(movie => movie.like)
+      default:
+        return arr;
+    }
+  }
+
+  updateFilterHandler = (filter) => {
+    this.setState({filter})
+  } 
+
   render() {
+    const { movies, searchText, filter } = this.state
+    const allMoviesCount = movies.length
+    const favouriteMoviesCount = movies.filter(movie => movie.favourite).length
+    const visibleMovies = this.filterHandler(this.searchHandler(movies, searchText), filter)
+
     return (
       <div className="app font-monospace">
           <div className="content">
-              <AppInfo />
+              <AppInfo 
+                allMoviesCount={allMoviesCount}
+                favouriteMoviesCount={favouriteMoviesCount}
+              />
               <div className="search-panel">
-                  <SearchPanel />
-                  <AppFilter />
+                  <SearchPanel 
+                    updateSearchTextHadler={this.updateSearchTextHadler}
+                  />
+                  <AppFilter
+                    updateFilterHandler={this.updateFilterHandler}
+                    filter={filter}
+                  />
               </div>
               <MovieList 
-                movies={this.state.movies} 
+                movies={visibleMovies} 
                 onDelete={this.movieDelete}
+                toggleHandler={this.toggleHandler}
               />
               <MovieAddForm 
                 addForm={this.addForm}
