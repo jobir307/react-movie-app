@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useEffect, useState } from "react";
 import AppFilter from "../app-filter/AppFilter"
 import AppInfo from "../app-info/AppInfo"
 import MovieList from "../movie-list/MovieList";
@@ -7,50 +7,37 @@ import MovieAddForm from "../movie-add-form/MovieAddForm";
 
 import './app.css';
 
-class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      movies: [
-        {id:1, name: 'Empire of Osman', viewers: 944, favourite: false, like: false},
-        {id:2, name: 'Ertugru', viewers: 451, favourite: false, like: false},
-        {id:3, name: 'Omar', viewers: 711, favourite: false, like: false}
-      ],
-      searchText: '',
-      filter: 'all'
-    }
+const App = () => {
+  const [movies, setMovies] = useState([{
+    id: '',
+    name: '',
+    like: false,
+    favourite: false,
+    viewers: ''
+  }])
+  const [searchText, setSearchText] = useState('')
+  const [filter, setFilter] = useState('all')
+
+  const movieDelete = (id) => {
+    setMovies(() => (
+      movies.filter(c => c.id !== id) // immutable - bu react qonunlariga muvofiq !!! 
+    ))
   }
 
-  movieDelete = (id) => {
-    this.setState(({ movies }) => {
-      /* const index = movies.findIndex(c => c.id === id)
-      movies.splice(index, 1) // mutable - bu react qonunlariga xos emas!!!  */
-
-      const newMovies = movies.filter(c => c.id !== id) // immutable - bu react qonunlariga muvofiq !!! 
-      return {
-        movies: newMovies
-      }
-    })
+  const addForm = (item) => {
+    setMovies([...movies, item])
   }
 
-  addForm = (item) => {
-    this.setState(({ movies }) => ({
-      movies: [...movies, item]
-    }))
-  }
-
-  toggleHandler = (id, prop) => {
-    this.setState(({ movies }) => ({
-      movies: movies.map(movie => {
+  const toggleHandler = (id, prop) => {
+    setMovies(movies.map(movie => {
         if (movie.id === id) {
           return {...movie, [prop]: !movie[prop]}
         }
         return movie
-      })
-    }))
+      }))
   }
 
-  searchHandler = (arr, term) => {
+  const searchHandler = (arr, term) => {
     if (term.length === 0){
       return arr
     } else {
@@ -58,11 +45,11 @@ class App extends Component {
     }
   }
 
-  updateSearchTextHadler = (term) => {
-    this.setState({ searchText: term })
+  const updateSearchTextHadler = (term) => {
+    setSearchText(term)
   }
 
-  filterHandler = (arr, filter) => {
+  const filterHandler = (arr, filter) => {
     switch (filter) {
       case 'most':
         return arr.filter(movie => movie.viewers > 800)
@@ -73,45 +60,55 @@ class App extends Component {
     }
   }
 
-  updateFilterHandler = (filter) => {
-    this.setState({filter})
-  } 
-
-  render() {
-    const { movies, searchText, filter } = this.state
-    const allMoviesCount = movies.length
-    const favouriteMoviesCount = movies.filter(movie => movie.favourite).length
-    const visibleMovies = this.filterHandler(this.searchHandler(movies, searchText), filter)
-
-    return (
-      <div className="app font-monospace">
-          <div className="content">
-              <AppInfo 
-                allMoviesCount={allMoviesCount}
-                favouriteMoviesCount={favouriteMoviesCount}
-              />
-              <div className="search-panel">
-                  <SearchPanel 
-                    updateSearchTextHadler={this.updateSearchTextHadler}
-                  />
-                  <AppFilter
-                    updateFilterHandler={this.updateFilterHandler}
-                    filter={filter}
-                  />
-              </div>
-              <MovieList 
-                movies={visibleMovies} 
-                onDelete={this.movieDelete}
-                toggleHandler={this.toggleHandler}
-              />
-              <MovieAddForm 
-                addForm={this.addForm}
-              />
-          </div>
-      </div>
-    )
+  const updateFilterHandler = (filter) => {
+    setFilter(filter)
   }
+  
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos?_start=0&_limit=30')
+    .then(response => response.json())
+    .then(moviesList => {
+      const newArr = moviesList.map(movie => ({
+        id: movie.id,
+        name: movie.title,
+        like: false,
+        favourite: false,
+        viewers: Math.floor(Math.random() * 1500)
+      }))
+      setMovies(newArr)
+    })
+  }, [])
+  const allMoviesCount = movies.length
+  const favouriteMoviesCount = movies.filter(movie => movie.favourite).length
+  const visibleMovies = filterHandler(searchHandler(movies, searchText), filter)
 
+  return (
+    <div className="app font-monospace">
+        <div className="content">
+            <AppInfo 
+              allMoviesCount={allMoviesCount}
+              favouriteMoviesCount={favouriteMoviesCount}
+            />
+            <div className="search-panel">
+                <SearchPanel 
+                  updateSearchTextHadler={updateSearchTextHadler}
+                />
+                <AppFilter
+                  updateFilterHandler={updateFilterHandler}
+                  filter={filter}
+                />
+            </div>
+            <MovieList 
+              movies={visibleMovies} 
+              onDelete={movieDelete}
+              toggleHandler={toggleHandler}
+            />
+            <MovieAddForm 
+              addForm={addForm}
+            />
+        </div>
+    </div>
+  )
 }
 
 export default App
